@@ -1,0 +1,15 @@
+FROM maven:3.6.1-jdk-8 AS mvn-build
+COPY src /usr/src/app/src
+COPY pom.xml /usr/src/app
+RUN mvn -f /usr/src/app/pom.xml package
+
+
+FROM quay.io/quarkus/centos-quarkus-native-image:graalvm-1.0.0-rc16  AS native-build
+COPY --from=mvn-build /usr/src/app/target /project
+RUN cd / && native-image -J-Djava.util.logging.manager=org.jboss.logmanager.LogManager -H:InitialCollectionPolicy='com.oracle.svm.core.genscavenge.CollectionPolicy$BySpaceAndTime' -jar /project/*-runner.jar -J-Djava.util.concurrent.ForkJoinPool.common.parallelism=1 -H:FallbackThreshold=0 -H:+ReportExceptionStackTraces -H:+PrintAnalysisCallTree -H:-AddAllCharsets -H:EnableURLProtocols=http -H:-SpawnIsolates -H:-JNI --no-server -H:-UseServiceLoaderFeature -H:+StackTrace
+
+FROM registry.fedoraproject.org/fedora-minimal
+COPY --from=native-build /*-runner /work/application
+WORKDIR /work/
+RUN chmod 775 /work
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0" ]
