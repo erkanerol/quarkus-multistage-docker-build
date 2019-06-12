@@ -2,6 +2,8 @@
 
 This repository shows how to dockerize a quarkus project without running maven in local machine. It shows that using multi-stage builds is a better alternative.
 
+Here is the related issue: https://github.com/quarkusio/quarkus/issues/2814
+
 Here are the alternative dockerfiles.
 - [With Runnable JAR](Dockerfile.proposed.jvm)
 - [With Native Image](Dockerfile.proposed.native)
