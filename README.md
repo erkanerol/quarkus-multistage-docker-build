@@ -2,6 +2,11 @@
 
 This repository shows how to dockerize a quarkus project without running maven in local machine. It shows that using multi-stage builds is a better alternative.
 
+Here are the alternative dockerfiles.
+- [With Runnable JAR](Dockerfile.proposed.jvm)
+- [With Native Image](Dockerfile.proposed.native)
+
+
 ## Classic way (Quarkus' way)
 
 ### Creating Docker Image with Runnable JAR
@@ -28,7 +33,7 @@ docker run -i --rm -p 8080:8080 quarkus-quickstart/getting-started-jvm:latest
 ./mvnw package -Pnative -Dnative-image.docker-build=true
 ```
 
-> For `native` profile, mvn run a docker image to create a native binary from JAR file. I believe running `docker run` via mvn is not a good idea.
+> For `native` profile, mvn runs a docker image to create a native binary from JAR file. I believe running `docker run` via mvn is not a good idea.
 
 - Run docker to build an image with the created JAR file
 ```
